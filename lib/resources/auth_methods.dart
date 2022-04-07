@@ -4,10 +4,23 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:instaclone/resources/storage_methods.dart';
+import '../models/user.dart' as models;
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<models.User> getUserDetails() async {
+    //getting the current user
+    User currentUser = _auth.currentUser!;
+
+    //retriving user details from the database
+    DocumentSnapshot snap =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+
+    return models.User.fromSnap(snap);
+  }
+
   //sign up user
   Future<String> signUpUser({
     required String email,
@@ -36,16 +49,21 @@ class AuthMethods {
         );
         print(photoUrl);
 
+        models.User user = models.User(
+          username: username,
+          uid: cred.user!.uid,
+          email: email,
+          bio: bio,
+          followers: [],
+          following: [],
+          photoUrl: photoUrl,
+        );
+
         //add user to our database
-        await _firestore.collection("users").doc(cred.user!.uid).set({
-          'username': username,
-          'uid': cred.user!.uid,
-          'email': email,
-          'bio': bio,
-          'followers': [],
-          'following': [],
-          'photoUrl': photoUrl,
-        });
+        await _firestore
+            .collection("users")
+            .doc(cred.user!.uid)
+            .set(user.toJson());
 
         res = "success";
       }
@@ -68,9 +86,7 @@ class AuthMethods {
       } else {
         res = "user need's to enter all the fields";
       }
-    } 
-    catch (err) {
-      
+    } catch (err) {
       res = err.toString();
       print(res);
     }

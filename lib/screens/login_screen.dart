@@ -5,6 +5,9 @@ import 'package:instaclone/screens/signup_screen.dart';
 import 'package:instaclone/utils/colors.dart';
 import 'package:instaclone/utils/utils.dart';
 import 'package:instaclone/widgets/text_field_input.dart';
+import 'package:instaclone/responsive/mobile_screen_layout.dart';
+import 'package:instaclone/responsive/responsive_layout_screen.dart';
+import 'package:instaclone/responsive/web_screen_layout.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -33,6 +36,14 @@ class _LoginScreenState extends State<LoginScreen> {
     String res = await AuthMethods().loginUser(
         email: _emailController.text, password: _passwordController.text);
     if (res == 'success') {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ResponsiveLayout(
+            mobileScreenLayout: MobileScreenLayout(),
+            webScreenLayout: WebScreenLayout(),
+          ),
+        ),
+      );
     } else {
       showSnackBar(context, res);
     }

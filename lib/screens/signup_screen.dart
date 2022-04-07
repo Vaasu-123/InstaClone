@@ -8,6 +8,10 @@ import 'package:instaclone/screens/login_screen.dart';
 import 'package:instaclone/utils/colors.dart';
 import 'package:instaclone/utils/utils.dart';
 import 'package:instaclone/widgets/text_field_input.dart';
+import 'package:instaclone/responsive/mobile_screen_layout.dart';
+import 'package:instaclone/responsive/responsive_layout_screen.dart';
+import 'package:instaclone/responsive/web_screen_layout.dart';
+
 
 class SignupScreen extends StatefulWidget {
   SignupScreen({Key? key}) : super(key: key);
@@ -55,6 +59,15 @@ class _SignupScreenState extends State<SignupScreen> {
     print(res);
     if (res != 'success') {
       showSnackBar(context, res);
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ResponsiveLayout(
+            mobileScreenLayout: MobileScreenLayout(),
+            webScreenLayout: WebScreenLayout(),
+          ),
+        ),
+      );
     }
     setState(() {
       _isLoading = false;
@@ -173,7 +186,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       ? const Center(
                           child: CircularProgressIndicator(
                             color: primaryColor,
-                            
                           ),
                         )
                       : const Text('Sign Up'),
